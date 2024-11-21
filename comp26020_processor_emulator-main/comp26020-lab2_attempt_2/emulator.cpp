@@ -199,7 +199,7 @@ int Emulator::insert_breakpoint(addr_t address, const std::string name) {
 }
 
 
-const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
+const std::unique_ptr<Breakpoint> Emulator::find_breakpoint(addr_t address) const {
   // iterate over all breakpoints
   for (int idx = 0; idx < breakpoints_sz; ++idx) {
     if (breakpoints[idx].has(address)) {
@@ -212,7 +212,7 @@ const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
 }
 
 // Basically the same as above, but for the name
-const Breakpoint* Emulator::find_breakpoint(const std::string name) const {
+const std::unique_ptr<Breakpoint> Emulator::find_breakpoint(const std::string name) const {
   for (int idx = 0; idx < breakpoints_sz; ++idx) {
     if (breakpoints[idx].has(name)) {
       return &breakpoints[idx];
@@ -222,7 +222,9 @@ const Breakpoint* Emulator::find_breakpoint(const std::string name) const {
 }
 
 int Emulator::delete_breakpoint(addr_t address) {
-  const Breakpoint* found = find_breakpoint(address);
+  //       = std::make_unique<Breakpoint>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
+  //const Breakpoint* found = find_breakpoint(address);
+  std::unique_ptr<Breakpoint> found = find_breakpoint(address);
 
   if (found == NULL)
     return 0;
