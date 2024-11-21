@@ -303,7 +303,9 @@ class Emulator {
   
   private:
     ProcessorState state;
-    Breakpoint* breakpoints;
+    //  Breakpoint* breakpoints;
+    //  std::unique_ptr<int> ptr = std::make_unique<int>(10);
+    std::unique_ptr<Breakpoint[]> breakpoints;
     int breakpoints_sz;
     int total_cycles;
 };

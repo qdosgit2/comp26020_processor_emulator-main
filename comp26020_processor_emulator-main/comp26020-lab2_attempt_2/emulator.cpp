@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <utility>
+#include <memory>
 #include "emulator.h"
 
 // ============= Breakpoint ==============
@@ -67,7 +68,8 @@ Emulator::Emulator() {
   // This is obviously an overkill. Initialising the array to be shorter
   // is okay, as long as you can handle the worst case of MAX_INSTRUCTIONS
   // breakpoints
-  breakpoints = new Breakpoint[MAX_INSTRUCTIONS];
+  breakpoints = std::make_unique<Breakpoint[]>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
+  
   breakpoints_sz = 0;
   total_cycles = 0;
 }
@@ -75,7 +77,8 @@ Emulator::Emulator() {
 // Copy Constructor
 Emulator::Emulator(const Emulator& other) {
   state = other.state;
-  breakpoints = new Breakpoint[MAX_INSTRUCTIONS];
+  breakpoints = std::make_unique<Breakpoint[]>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
+  // breakpoints = new Breakpoint[MAX_INSTRUCTIONS];
   breakpoints_sz = other.breakpoints_sz;
   total_cycles = other.total_cycles;
 
@@ -97,7 +100,8 @@ Emulator& Emulator::operator=(const Emulator& other) {
     return *this;
 
   state = other.state;
-  breakpoints = new Breakpoint[MAX_INSTRUCTIONS];
+  breakpoints = std::make_unique<Breakpoint[]>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
+  // breakpoints = new Breakpoint[MAX_INSTRUCTIONS];
   breakpoints_sz = other.breakpoints_sz;
   total_cycles = other.total_cycles;
 
