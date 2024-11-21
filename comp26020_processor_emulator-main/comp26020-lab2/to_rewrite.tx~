@@ -1,0 +1,10 @@
+The implementation is composed of five files:
+
+• instructions.cpp and instructions.h contain a class hierarchy of processor instructions,
+including how they are created, how they are represented as strings, and, most importantly, how
+executing them modifies the processor state.
+
+• emulator.cpp and emulator.h describe the emulator itself: how the processor state is initialiased or
+loaded from a file, how instructions are executed, how breakpoints are managed.
+
+• common.h contains header information that is needed by both the emulator and the instructions.

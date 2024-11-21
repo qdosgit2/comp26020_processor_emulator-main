@@ -1,0 +1,5 @@
+if(EXISTS "/workspaces/comp26020_processor_emulator-main/comp26020_processor_emulator-main/comp26020-lab2/build/structural-tests-b12d07c_tests.cmake")
+  include("/workspaces/comp26020_processor_emulator-main/comp26020_processor_emulator-main/comp26020-lab2/build/structural-tests-b12d07c_tests.cmake")
+else()
+  add_test(structural-tests_NOT_BUILT-b12d07c structural-tests_NOT_BUILT-b12d07c)
+endif()
