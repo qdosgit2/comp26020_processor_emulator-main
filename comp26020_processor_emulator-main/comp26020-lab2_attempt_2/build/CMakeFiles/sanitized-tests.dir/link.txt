@@ -1,0 +1,1 @@
+/usr/bin/g++-12 -Og -g -Wall -Wextra -Wpedantic -fsanitize=address CMakeFiles/sanitized-tests.dir/functional-tests.cpp.o -o sanitized-tests  libemulator_asan.a libcatch.a 
