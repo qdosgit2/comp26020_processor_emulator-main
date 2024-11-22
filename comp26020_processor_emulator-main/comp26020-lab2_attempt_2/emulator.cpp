@@ -182,75 +182,118 @@ int Emulator::run(int steps) {
 
 int Emulator::insert_breakpoint(addr_t address, const std::string name) {
   // breakpoints is full (should never happen though!)
+  
   if (breakpoints_sz == MAX_INSTRUCTIONS)
     return 0;
 
   // Breakpoint already exists
-  if (find_breakpoint(address) != NULL)
+  if (find_breakpoint(address) >= 0)
     return 0;
 
   // Breakpoint name already used
-  if (find_breakpoint(name) != NULL)
+  if (find_breakpoint(name) >= 0)
     return 0;
 
   // Insert breakpoint and increment breakpoints_sz in a single step
   breakpoints[breakpoints_sz++] = Breakpoint(address, name);
+  
   return 1;
+  
 }
 
 
-const std::unique_ptr<Breakpoint> Emulator::find_breakpoint(addr_t address) const {
-  // iterate over all breakpoints
-  for (int idx = 0; idx < breakpoints_sz; ++idx) {
+const int Emulator::find_breakpoint(addr_t address) const {
+  
+  //  addr_t = int
+
+  //  breakpoints_sz = int
+  
+  //  breakpoints()
+  
+  //  Iterate over all breakpoints.
+  
+  int idx;
+
+  for (idx = 0; idx < breakpoints_sz; ++idx) {
+    
     if (breakpoints[idx].has(address)) {
-      // if this one has the address we're looking for return it
-      return &breakpoints[idx];
+      
+      // If this one has the address we're looking for, return it.
+      
+      return idx;
+      
     }
+    
   }
-  // indicates failure to find a breakpoint
-  return NULL;
+
+  //  Indicates failure to find a breakpoint.
+  
+  return -1;
+  
 }
 
 // Basically the same as above, but for the name
-const std::unique_ptr<Breakpoint> Emulator::find_breakpoint(const std::string name) const {
-  for (int idx = 0; idx < breakpoints_sz; ++idx) {
+const int Emulator::find_breakpoint(const std::string name) const {
+
+  int idx;
+
+  for (idx = 0; idx < breakpoints_sz; ++idx) {
+    
     if (breakpoints[idx].has(name)) {
-      return &breakpoints[idx];
+      
+      return idx;
+      
     }
+    
   }
-  return NULL;
+  return -1;
+  
 }
 
 int Emulator::delete_breakpoint(addr_t address) {
-  //       = std::make_unique<Breakpoint>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
-  //const Breakpoint* found = find_breakpoint(address);
-  std::unique_ptr<Breakpoint> found = find_breakpoint(address);
 
-  if (found == NULL)
+  //  = std::make_unique<Breakpoint>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
+
+  //  const Breakpoint* found = find_breakpoint(address);
+
+  //  std::unique_ptr<Breakpoint> found = find_breakpoint(address);
+
+  int found = find_breakpoint(address);
+
+  if (breakpoints[found] == -1)
     return 0;
 
-  // Remove one breakpoint
+  //  Remove one breakpoint from counter.
   --breakpoints_sz;
 
-  // Urghh: C pointer magic to find the index of the breakpoint from its pointer
-  // `found` is a pointer in the `breakpoints` array, so the difference of
-  // `found` and `breakpoints` is the index of `found` in the array.
-  int found_idx = found - breakpoints;
+  //  Urghh: C pointer magic to find the index of the breakpoint from its pointer
+  //  `found` is a pointer in the `breakpoints` array, so the difference of
+  //  `found` and `breakpoints` is the index of `found` in the array.
+  
+  //  int found_idx = found - breakpoints;
 
-  // Move all breakpoints above found one position to the left, to fill the gap 
+  //  Move all breakpoints found above, one position to the left, to fill the gap.
+  
   for (int idx = found_idx; idx < breakpoints_sz; ++idx) {
-    // This is an object assignment operation, assigning to breakpoints[idx]
-    // the object currently in breakpoints[idx + 1]. Without std::move, this
-    // would cause a copy
+    
+    //  This is an object assignment operation, assigning to breakpoints[idx]
+    //  the object currently in breakpoints[idx + 1]. Without std::move, this
+    //  would cause a copy
+    
     breakpoints[idx] = std::move(breakpoints[idx + 1]);
+    
   }
 
   return 1;
+  
 }
 
 // Oh, look, this function is practically identical to the one above
 int Emulator::delete_breakpoint(const std::string name) {
-  const Breakpoint* found = find_breakpoint(name);
+  
+  // const std::unique_ptr<Breakpoint> found = find_breakpoint(name);
+
+  const int found = find_breakpoint(name);
 
   if (found == NULL)
     return 0;
