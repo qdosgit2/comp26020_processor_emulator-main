@@ -246,6 +246,7 @@ const int Emulator::find_breakpoint(const std::string name) const {
     }
     
   }
+  
   return -1;
   
 }
@@ -260,7 +261,7 @@ int Emulator::delete_breakpoint(addr_t address) {
 
   int found = find_breakpoint(address);
 
-  if (breakpoints[found] == -1)
+  if (breakpoints[found])
     return 0;
 
   //  Remove one breakpoint from counter.
