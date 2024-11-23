@@ -316,7 +316,7 @@ class Emulator {
   //  So instead opting to make calls to breakpoints_v under-the-hood,
   //  for code convenience and memory safety.
 
-  std::vector<Breakpoint> breakpoints_v;
+    std::vector<Breakpoint> breakpoints_v;
   
     ProcessorState state;
     Breakpoint* breakpoints;

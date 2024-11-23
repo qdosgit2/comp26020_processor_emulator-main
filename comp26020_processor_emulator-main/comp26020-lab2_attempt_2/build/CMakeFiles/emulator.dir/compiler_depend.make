@@ -89,8 +89,8 @@ CMakeFiles/emulator.dir/emulator.cpp.o: ../emulator.cpp \
   /usr/include/c++/12/ext/numeric_traits.h \
   /usr/include/c++/12/bits/cpp_type_traits.h \
   /usr/include/c++/12/ext/type_traits.h \
-  /usr/include/c++/12/iostream \
-  /usr/include/c++/12/ostream \
+  /usr/include/c++/12/fstream \
+  /usr/include/c++/12/istream \
   /usr/include/c++/12/ios \
   /usr/include/c++/12/iosfwd \
   /usr/include/c++/12/bits/stringfwd.h \
@@ -203,9 +203,16 @@ CMakeFiles/emulator.dir/emulator.cpp.o: ../emulator.cpp \
   /usr/include/x86_64-linux-gnu/c++/12/bits/ctype_inline.h \
   /usr/include/c++/12/bits/locale_facets.tcc \
   /usr/include/c++/12/bits/basic_ios.tcc \
+  /usr/include/c++/12/ostream \
   /usr/include/c++/12/bits/ostream.tcc \
-  /usr/include/c++/12/istream \
   /usr/include/c++/12/bits/istream.tcc \
+  /usr/include/c++/12/bits/codecvt.h \
+  /usr/include/x86_64-linux-gnu/c++/12/bits/basic_file.h \
+  /usr/include/x86_64-linux-gnu/c++/12/bits/c++io.h \
+  /usr/include/c++/12/bits/fstream.tcc \
+  /usr/include/c++/12/iostream \
+  /usr/include/c++/12/sstream \
+  /usr/include/c++/12/bits/sstream.tcc \
   ../emulator.h \
   ../common.h \
   /usr/include/inttypes.h \
@@ -389,7 +396,17 @@ CMakeFiles/emulator.dir/instructions.cpp.o: ../instructions.cpp \
 
 ../common.h:
 
-../emulator.h:
+/usr/include/c++/12/sstream:
+
+/usr/include/c++/12/bits/fstream.tcc:
+
+/usr/include/x86_64-linux-gnu/c++/12/bits/c++io.h:
+
+/usr/include/x86_64-linux-gnu/c++/12/bits/basic_file.h:
+
+/usr/include/c++/12/bits/codecvt.h:
+
+/usr/include/c++/12/ostream:
 
 /usr/include/c++/12/vector:
 
@@ -473,6 +490,10 @@ CMakeFiles/emulator.dir/instructions.cpp.o: ../instructions.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
 
+/usr/include/c++/12/iostream:
+
+/usr/include/sched.h:
+
 /usr/include/pthread.h:
 
 /usr/include/x86_64-linux-gnu/c++/12/bits/gthr-default.h:
@@ -513,6 +534,8 @@ CMakeFiles/emulator.dir/instructions.cpp.o: ../instructions.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
 
+/usr/include/c++/12/bits/sstream.tcc:
+
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
 
 /usr/include/c++/12/cstdlib:
@@ -533,10 +556,6 @@ CMakeFiles/emulator.dir/instructions.cpp.o: ../instructions.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
 
-/usr/include/sched.h:
-
-/usr/include/c++/12/iostream:
-
 /usr/include/c++/12/bits/basic_ios.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/stdio2.h:
@@ -550,16 +569,6 @@ CMakeFiles/emulator.dir/instructions.cpp.o: ../instructions.cpp \
 /usr/include/c++/12/cwctype:
 
 /usr/include/x86_64-linux-gnu/bits/string_fortified.h:
-
-/usr/include/c++/12/istream:
-
-/usr/include/c++/12/stdexcept:
-
-/usr/include/c++/12/string_view:
-
-/usr/include/c++/12/cctype:
-
-/usr/include/features-time64.h:
 
 /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h:
 
@@ -657,6 +666,16 @@ CMakeFiles/emulator.dir/instructions.cpp.o: ../instructions.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
 
+/usr/include/c++/12/stdexcept:
+
+/usr/include/c++/12/string_view:
+
+/usr/include/c++/12/cctype:
+
+/usr/include/features-time64.h:
+
+/usr/include/c++/12/istream:
+
 /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
 
 /usr/include/x86_64-linux-gnu/c++/12/bits/ctype_inline.h:
@@ -741,7 +760,9 @@ CMakeFiles/emulator.dir/instructions.cpp.o: ../instructions.cpp \
 
 /usr/include/c++/12/bits/cpp_type_traits.h:
 
-/usr/include/c++/12/ostream:
+../emulator.h:
+
+/usr/include/c++/12/fstream:
 
 /usr/include/c++/12/ios:
 

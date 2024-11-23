@@ -3,7 +3,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <utility>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 #include "emulator.h"
 
 // ============= Breakpoint ==============
@@ -347,11 +349,22 @@ int Emulator::print_program() const {
 }
 
 int Emulator::load_state(const std::string filename) {
+  
   // Delete all breakpoints
 
   breakpoints_v.clear();
 
+
+
+
+  std::cout << filename << "\n";
+
+  
+
+
+
   int read = 0;
+  
   FILE *fp = fopen(filename.c_str(), "r");
 
   if (fp == NULL)
@@ -370,8 +383,107 @@ int Emulator::load_state(const std::string filename) {
   if ((read != 1) || (state.pc >= MEMORY_SIZE) || (state.pc < 0))
     return 0;
 
+
+
+
+
+
+
+  ///////////////////  BELOW WORKS, TESTED
+
+  
+
+  
+  std::ifstream file;
+
+  std::string line;
+
+  std::string word;
+
+  std::vector<std::string> split_str;
+
   int num = 0;
-  for (int offset = 0; offset < MEMORY_SIZE; ++offset) {
+
+  int offset = 0;
+
+
+  file.open(filename);
+
+  std::getline(file, line);
+
+  try { total_cycles = std::stoi(line); }
+
+  catch (...) { return 0; }
+
+  if (!file.good() || total_cycles < 0) { return 0; } 
+
+  std::getline(file, line);
+  
+  try { state.acc = std::stoi(line); }
+
+  catch (...) { return 0; }
+
+  if (!file.good() || state.acc > ARCH_MAXVAL || state.acc < 0) { return 0; }
+
+  std::getline(file, line);
+  
+  try { state.pc = std::stoi(line); }
+
+  catch (...) { return 0; }
+
+  if (!file.good() || state.pc >= MEMORY_SIZE || state.pc < 0) { return 0; }
+
+
+
+  ////////////////////////////////////////
+
+  for (offset ; offset < MEMORY_SIZE; offset++) {
+    
+    std::getline(file, line);
+  
+    try { num = std::stoi(line); }
+
+    catch (...) { return 0; }
+
+    if (!file.good()  || (num > ARCH_MAXVAL) || (num < 0)) {
+
+      return 0;
+
+    }
+
+    std::cout << offset << "  " << num << "\n";
+    
+    // state.memory[offset] = num;
+   
+  }
+
+  // while (std::getline(file, line)) {
+    
+  //   std::stringstream ss(line);
+
+  //   while (ss >> word) { split_str.push_back(word); }
+
+  //   try { num = std::stoi(split_str[0]); }
+
+  //   catch (...) { return 0; }
+
+  //   if ( num >= MEMORY_SIZE ) { return 0; }
+
+  //   std::cout << num << "  " << split_str[1] << "\n";
+    
+  //   // if (!insert_breakpoint(num, split_str[1])) { return 0; }
+    
+  //   split_str.clear();
+    
+  // }
+
+
+
+  
+  num = 0;
+  
+  for (offset = 0; offset < MEMORY_SIZE; ++offset) {
+    
     // PP: Why not read a number directly into a state.memory location?
     // C++ by default assumes that your byte sized variable (e.g. state.memory[offset])
     // is supposed to hold a character, so it might assume that you are trying to read an
@@ -380,10 +492,16 @@ int Emulator::load_state(const std::string filename) {
     // There are ways to force fscanf to read a number, but it will cause fewer
     // issues down the line, if you use integers as temporary storage, which forces C++
     // to read a number
+    
     read = fscanf(fp, "%d\n", &num);
+    
     if ((read != 1) || (num > ARCH_MAXVAL) || (num < 0))
       return 0;
+    
+    // std::cout << offset << "  " << num << "\n";
+    
     state.memory[offset] = num;
+    
   }
 
   while (1) {
@@ -398,6 +516,8 @@ int Emulator::load_state(const std::string filename) {
       return 0;
 
     // Try to insert the breakpoint and return fail if unsuccessful
+    std::cout << num << "  " << name << "\n";
+    
     if (!insert_breakpoint(num, name))
       return 0;
   }
