@@ -187,11 +187,11 @@ int Emulator::insert_breakpoint(addr_t address, const std::string name) {
     return 0;
 
   // Breakpoint already exists
-  if (find_breakpoint(address) != nullptr)
+  if (find_breakpoint_shared_pt(address) != nullptr)
     return 0;
 
   // Breakpoint name already used
-  if (find_breakpoint(name) != nullptr)
+  if (find_breakpoint_shared_pt(name) != nullptr)
     return 0;
 
   // Insert breakpoint and increment breakpoints_sz in a single step
@@ -201,7 +201,41 @@ int Emulator::insert_breakpoint(addr_t address, const std::string name) {
   
 }
 
-const std::shared_ptr<Breakpoint> Emulator::find_breakpoint(addr_t address) const {
+const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
+
+  //  Backwards-compatibility function.
+
+  //  get() will convert shared pointer to raw C pointer.
+
+  auto res = find_breakpoint_shared_pt(address);
+
+  if (res == nullptr) {
+
+    return NULL;
+
+  }
+
+  find_breakpoint_shared_pt(address).get();
+
+}
+
+const Breakpoint* Emulator::find_breakpoint(const std::string name) const {
+
+  //  Backwards-compatibility function.
+
+  auto res = find_breakpoint_shared_pt(name);
+
+  if (res == nullptr) {
+
+    return NULL;
+
+  }
+
+  find_breakpoint_shared_pt(name).get();
+  
+}
+
+const std::shared_ptr<Breakpoint> Emulator::find_breakpoint_shared_pt(addr_t address) const {
   
   //  addr_t = int
 
@@ -233,7 +267,7 @@ const std::shared_ptr<Breakpoint> Emulator::find_breakpoint(addr_t address) cons
 
 //  Basically the same as above, but for the name
 
-const std::shared_ptr<Breakpoint> Emulator::find_breakpoint(const std::string name) const {
+const std::shared_ptr<Breakpoint> Emulator::find_breakpoint_shared_pt(const std::string name) const {
 
   int idx;
 
@@ -253,9 +287,9 @@ const std::shared_ptr<Breakpoint> Emulator::find_breakpoint(const std::string na
 
 int Emulator::delete_breakpoint(addr_t address) {
 
-  std::shared_ptr<Breakpoint> found = find_breakpoint(address);
+  std::shared_ptr<Breakpoint> found = find_breakpoint_shared_pt(address);
 
-  if (find_breakpoint(address) == nullptr)
+  if (find_breakpoint_shared_pt(address) == nullptr)
     return 0;
 
   //  Move all breakpoints found above, one position to the left, to fill the gap.
@@ -293,7 +327,7 @@ int Emulator::delete_breakpoint(addr_t address) {
 
 int Emulator::delete_breakpoint(const std::string name) {
   
-  const std::shared_ptr<Breakpoint> found = find_breakpoint(name);
+  const std::shared_ptr<Breakpoint> found = find_breakpoint_shared_pt(name);
 
   if (found == nullptr)
     return 0;
@@ -333,7 +367,7 @@ int Emulator::is_zero() const {
 }
 
 int Emulator::is_breakpoint() const {
-  return find_breakpoint(state.pc)->get_name() != "not found";
+  return find_breakpoint_shared_pt(state.pc) != nullptr;
 }
 
 int Emulator::print_program() const {

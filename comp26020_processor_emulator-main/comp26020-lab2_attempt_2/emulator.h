@@ -192,7 +192,9 @@ class Emulator {
      * @param address The breakpoint address
      * @return A non-owning pointer to the Breakpoint or null if the address was not found
      */
-    const std::shared_ptr<Breakpoint> find_breakpoint(addr_t address) const;
+    const Breakpoint* find_breakpoint(addr_t address) const;
+
+    const std::shared_ptr<Breakpoint> find_breakpoint_shared_pt(addr_t address) const;
 
     /**
      * Find the breakpoint with the given name in our breakpoint storage
@@ -200,7 +202,9 @@ class Emulator {
      * @param name The name of the breakpoint (non-owning pointer)
      * @return A non-owning pointer to the Breakpoint or null if the name was not found
      */
-    const std::shared_ptr<Breakpoint> find_breakpoint(const std::string name) const;
+    const Breakpoint* find_breakpoint(const std::string name) const;
+
+    const std::shared_ptr<Breakpoint> find_breakpoint_shared_pt(const std::string name) const;
 
     /**
      * Unregister the breakpoint with the given address
