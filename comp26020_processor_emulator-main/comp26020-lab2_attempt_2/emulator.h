@@ -309,9 +309,11 @@ class Emulator {
 
     //  The more convenient data structure would probably be:
 
-    //  std::vector<std::unique_ptr<Breakpoint>> breakpoints;
+    // std::vector<Breakpoint> breakpoints;
 
-    //  The most backwards compatible data structure is probably:
+    //  The most backwards compatible data structure, i.e. will work
+    //  with tests (probably a big thing in the world of C++) is
+    //  probably:
   
     std::shared_ptr<Breakpoint[]> breakpoints;
     int breakpoints_sz;
