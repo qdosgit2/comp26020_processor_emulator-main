@@ -320,6 +320,7 @@ CMakeFiles/functional-tests.dir/functional-tests.cpp.o: ../functional-tests.cpp 
   ../common.h \
   /usr/include/inttypes.h \
   ../emulator.h \
+  /usr/include/c++/12/iostream \
   /usr/include/fcntl.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
@@ -802,6 +803,8 @@ CMakeFiles/functional-tests.dir/functional-tests.cpp.o: ../functional-tests.cpp 
 /usr/include/x86_64-linux-gnu/bits/time.h:
 
 /usr/include/c++/12/cassert:
+
+/usr/include/c++/12/iostream:
 
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 

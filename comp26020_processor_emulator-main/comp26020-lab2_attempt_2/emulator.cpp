@@ -215,7 +215,7 @@ const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
 
   }
 
-  find_breakpoint_shared_pt(address).get();
+  return res.get();
 
 }
 
@@ -231,7 +231,7 @@ const Breakpoint* Emulator::find_breakpoint(const std::string name) const {
 
   }
 
-  find_breakpoint_shared_pt(name).get();
+  return res.get();
   
 }
 

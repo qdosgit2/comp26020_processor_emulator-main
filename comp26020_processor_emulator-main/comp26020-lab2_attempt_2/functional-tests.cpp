@@ -4,6 +4,8 @@
 #include "instructions.h"
 #include "emulator.h"
 
+#include <iostream>
+
 #include <cstdio>
 #include <fcntl.h>
 #include <inttypes.h>
@@ -1375,6 +1377,8 @@ const T* get_address(Dereferencable auto ptr) {
 TEST_CASE("Emulator Constructors, Initialisers, and Getters", "[emulator][init][getters]") {
   Emulator emulator;
 
+  std::cout << "TESTING1";
+
   // Default Constructor
   REQUIRE(emulator.read_acc() == 0);
   REQUIRE(emulator.read_pc() == 0);
@@ -1383,15 +1387,22 @@ TEST_CASE("Emulator Constructors, Initialisers, and Getters", "[emulator][init][
   REQUIRE(emulator.cycles() == 0);
   REQUIRE(emulator.num_breakpoints() == 0);
 
+  std::cout << "TESTING2";
+  
   // Emulator::load_state()
   // This is the only way to precisely control the internal state of the
   // Emulator, so we have to test this very early. Most subsequent tests
   // rely on this part working correctly
   REQUIRE(fopen("data/state1.txt", "r") != NULL);
+  std::cout << "TESTING2.1";
   REQUIRE(emulator.load_state("data/state1.txt"));
+  std::cout << "TESTING2.2";
   REQUIRE(emulator.read_acc() == 10);
+  std::cout << "TESTING2.3";
   REQUIRE(emulator.read_pc() == 4);
+  std::cout << "TESTING2.4";
   REQUIRE(emulator.read_mem(0) == 0);
+  std::cout << "TESTING2.5";
   REQUIRE(emulator.read_mem(1) == 0);
   REQUIRE(emulator.read_mem(2) == 0);
   REQUIRE(emulator.read_mem(3) == 0);
@@ -1402,10 +1413,16 @@ TEST_CASE("Emulator Constructors, Initialisers, and Getters", "[emulator][init][
   REQUIRE(emulator.read_mem(33) == 32);
   REQUIRE(emulator.read_mem(34) == 5);
   REQUIRE(emulator.read_mem(35) == 0);
+  std::cout << "TESTING2.6";
   REQUIRE(emulator.cycles() == 0);
+  std::cout << "TESTING2.7";
   REQUIRE(emulator.num_breakpoints() == 1);
+  std::cout << "TESTING2.8\n";
+  std::cout << emulator.find_breakpoint(32)->get_name();
   REQUIRE_THAT(emulator.find_breakpoint(32)->get_name(), Catch::Matchers::Equals("END"));
 
+  std::cout << "TESTING3";
+  
   // Essentially a pointer to the beginning of the breakpoints storage
   const Breakpoint* breakpoints = get_address<Breakpoint>(emulator.find_breakpoint(32));
 
