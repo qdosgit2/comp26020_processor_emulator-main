@@ -68,7 +68,7 @@ Emulator::Emulator() {
   // This is obviously an overkill. Initialising the array to be shorter
   // is okay, as long as you can handle the worst case of MAX_INSTRUCTIONS
   // breakpoints
-  breakpoints = std::make_unique<Breakpoint[]>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
+  breakpoints = std::make_shared<Breakpoint[]>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
   
   breakpoints_sz = 0;
   total_cycles = 0;
@@ -77,7 +77,7 @@ Emulator::Emulator() {
 // Copy Constructor
 Emulator::Emulator(const Emulator& other) {
   state = other.state;
-  breakpoints = std::make_unique<Breakpoint[]>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
+  breakpoints = std::make_shared<Breakpoint[]>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
   // breakpoints = new Breakpoint[MAX_INSTRUCTIONS];
   breakpoints_sz = other.breakpoints_sz;
   total_cycles = other.total_cycles;
@@ -100,7 +100,7 @@ Emulator& Emulator::operator=(const Emulator& other) {
     return *this;
 
   state = other.state;
-  breakpoints = std::make_unique<Breakpoint[]>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
+  breakpoints = std::make_shared<Breakpoint[]>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
   // breakpoints = new Breakpoint[MAX_INSTRUCTIONS];
   breakpoints_sz = other.breakpoints_sz;
   total_cycles = other.total_cycles;
@@ -187,11 +187,11 @@ int Emulator::insert_breakpoint(addr_t address, const std::string name) {
     return 0;
 
   // Breakpoint already exists
-  if (find_breakpoint(address).get_name() != "not found")
+  if (find_breakpoint(address)->get_name() != "not found")
     return 0;
 
   // Breakpoint name already used
-  if (find_breakpoint(name).get_name() != "not found")
+  if (find_breakpoint(name)->get_name() != "not found")
     return 0;
 
   // Insert breakpoint and increment breakpoints_sz in a single step
@@ -201,7 +201,7 @@ int Emulator::insert_breakpoint(addr_t address, const std::string name) {
   
 }
 
-const Breakpoint& Emulator::find_breakpoint(addr_t address) const {
+const std::shared_ptr<Breakpoint> Emulator::find_breakpoint(addr_t address) const {
   
   //  addr_t = int
 
@@ -219,7 +219,7 @@ const Breakpoint& Emulator::find_breakpoint(addr_t address) const {
       
       // If this one has the address we're looking for, return it.
       
-      return *breakpoints[idx];
+      return breakpoints[idx];
       
     }
     
@@ -227,13 +227,13 @@ const Breakpoint& Emulator::find_breakpoint(addr_t address) const {
 
   //  Indicates failure to find a breakpoint.
   
-  return Breakpoint(0, "not found");
+  return nullptr;
   
 }
 
 //  Basically the same as above, but for the name
 
-const Breakpoint& Emulator::find_breakpoint(const std::string name) const {
+const std::shared_ptr<Breakpoint> Emulator::find_breakpoint(const std::string name) const {
 
   int idx;
 
@@ -241,74 +241,66 @@ const Breakpoint& Emulator::find_breakpoint(const std::string name) const {
     
     if (breakpoints[idx].has(name)) {
       
-      return *breakpoints[idx];
+      return breakpoints[idx];
       
     }
     
   }
   
-  return Breakpoint(0, "not found");
+  return nullptr;
   
 }
 
 int Emulator::delete_breakpoint(addr_t address) {
 
-  //  = std::make_unique<Breakpoint>(MAX_INSTRUCTIONS); // new Breakpoint[MAX_INSTRUCTIONS];
+  std::shared_ptr<Breakpoint> found = find_breakpoint(address);
 
-  //  const Breakpoint* found = find_breakpoint(address);
-
-  //  std::unique_ptr<Breakpoint> found = find_breakpoint(address);
-
-  Breakpoint& found = find_breakpoint(address);
-
-  if (breakpoints[found])
+  if (find_breakpoint(address).get_name() == "not found")
     return 0;
-
-  //  Remove one breakpoint from counter.
-  --breakpoints_sz;
-
-  //  Urghh: C pointer magic to find the index of the breakpoint from its pointer
-  //  `found` is a pointer in the `breakpoints` array, so the difference of
-  //  `found` and `breakpoints` is the index of `found` in the array.
-  
-  //  int found_idx = found - breakpoints;
 
   //  Move all breakpoints found above, one position to the left, to fill the gap.
-  
-  for (int idx = found_idx; idx < breakpoints_sz; ++idx) {
-    
-    //  This is an object assignment operation, assigning to breakpoints[idx]
-    //  the object currently in breakpoints[idx + 1]. Without std::move, this
-    //  would cause a copy
-    
-    breakpoints[idx] = std::move(breakpoints[idx + 1]);
-    
+
+  //  Precarious iterator loop due to patching over non-vector array of objects.
+
+  int i = 0;
+
+  int jump = 0;
+
+  while ( (i + jump) < breakpoints_sz ) {
+
+    if ( breakpoints[i].get_name() == found.get_name() && breakpoints[i].get_address() == found.get_address() ) {
+
+      jump++;
+
+    }
+
+    breakpoints[i] = std::move(breakpoints[i + jump]);
+
+    i++;
+
   }
 
-  return 1;
+  //  Remove one breakpoint from counter.
   
+  --breakpoints_sz;
+  
+  return 1;
+
 }
 
-// Oh, look, this function is practically identical to the one above
+//  Just call above function.
+
 int Emulator::delete_breakpoint(const std::string name) {
   
-  // const std::unique_ptr<Breakpoint> found = find_breakpoint(name);
+  //  const std::unique_ptr<Breakpoint> found = find_breakpoint(name);
 
-  const int found = find_breakpoint(name);
+  std::shared_ptr<Breakpoint> found = find_breakpoint(address);
 
-  if (found == NULL)
+  if (found.get_name() == "not found")
     return 0;
 
-  --breakpoints_sz;
-
-  int found_idx = found - breakpoints;
-
-  // Move all breakpoints above found, one position to the left to fill the gap 
-  for (int idx = found_idx; idx < breakpoints_sz; ++idx) {
-    breakpoints[idx] = std::move(breakpoints[idx + 1]);
-  }
-
-  return 1;
+  return delete_breakpoint(found.get_address());
+  
 }
 
 int Emulator::num_breakpoints() const {
@@ -342,7 +334,7 @@ int Emulator::is_zero() const {
 }
 
 int Emulator::is_breakpoint() const {
-  return find_breakpoint(state.pc) != NULL;
+  return find_breakpoint(state.pc).get_name() != "not found";
 }
 
 int Emulator::print_program() const {
