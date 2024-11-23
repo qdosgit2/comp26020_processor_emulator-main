@@ -2397,8 +2397,12 @@ TEST_CASE("Delete Breakpoint", "[emulator][breakpoint][exec]") {
 
   SECTION("Can add a breakpoint after deleting it") {
     for (int i = 0; i < num_breakpoints; ++i) {
+
+      std::cout << "  "  <<  "test a\n";
       REQUIRE(emulator.delete_breakpoint(names[i]));
+      std::cout << "  "  <<  "test b\n";
       REQUIRE(emulator.num_breakpoints() == num_breakpoints - 1);
+      std::cout << "  "  <<  "test c\n";
       REQUIRE(emulator.find_breakpoint(names[i]) == NULL);
 
       CHECK(emulator.insert_breakpoint(addresses[i], names[i]));

@@ -220,7 +220,7 @@ int Emulator::insert_breakpoint(addr_t address, const std::string name) {
   breakpoints_v.push_back(Breakpoint(address, name));
 
   // Insert breakpoint and increment breakpoints_sz in a single step
-  breakpoints[breakpoints_sz++] = Breakpoint(address, name);
+  // breakpoints[breakpoints_sz++] = Breakpoint(address, name);
 
   breakpoints_sz = breakpoints_v.size();
 
@@ -238,7 +238,7 @@ const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
 
     if (breakpoints_v[i].has(address)) {
 
-      std::cout << i << "  via vectors  " <<  breakpoints_v[i].get_name() << "  " << breakpoints_v[i].get_address() << "\n";
+      std::cout << i << "  via vectors  " <<  breakpoints_v[i].get_name() << "  " << breakpoints_v[i].get_address() << "  " << &breakpoints_v[i] << "\n";
 
       return &breakpoints_v[i];
 
@@ -247,13 +247,13 @@ const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
   }
   
   
-  for (int idx = 0; idx < breakpoints_sz; ++idx) {
-    if (breakpoints[idx].has(address)) {
-      // if this one has the address we're looking for return it
+  // for (int idx = 0; idx < breakpoints_sz; ++idx) {
+  //   if (breakpoints[idx].has(address)) {
+  //     // if this one has the address we're looking for return it
 
-      return &breakpoints[idx];
-    }
-  }
+  //     return &breakpoints[idx];
+  //   }
+  // }
   // indicates failure to find a breakpoint
   return NULL;
 }
@@ -268,7 +268,7 @@ const Breakpoint* Emulator::find_breakpoint(const std::string name) const {
 
     if (breakpoints_v[i].has(name)) {
 
-      std::cout << i << "  via vectors  " <<  name << "  " << breakpoints_v[i].get_address() << "\n";
+      // std::cout << i << "  via vectors  " <<  name << "  " << breakpoints_v[i].get_address() << "  " <<  &breakpoints_v[i] << "\n";
       
       // std::cout << name << "  name\n";
       
@@ -279,14 +279,14 @@ const Breakpoint* Emulator::find_breakpoint(const std::string name) const {
   }
 
   
-  for (int idx = 0; idx < breakpoints_sz; ++idx) {
-    if (breakpoints[idx].has(name)) {
+  // for (int idx = 0; idx < breakpoints_sz; ++idx) {
+  //   if (breakpoints[idx].has(name)) {
       
-      return &breakpoints[idx];
+  //     return &breakpoints[idx];
       
-    }
+  //   }
     
-  }
+  // }
   
   return NULL;
   
@@ -309,19 +309,19 @@ int Emulator::delete_breakpoint(addr_t address) {
   // `found` and `breakpoints` is the index of `found` in the array.
   int found_idx = found - breakpoints;
 
-  std::cout << found_idx << "   erasing...\n";
-  // Move all breakpoints above found one position to the left, to fill the gap 
-  for (int idx = found_idx; idx < breakpoints_sz; ++idx) {
-    // This is an object assignment operation, assigning to breakpoints[idx]
-    // the object currently in breakpoints[idx + 1]. Without std::move, this
-    // would cause a copy
+  // std::cout << found_idx << "   erasing...\n";
+  // // Move all breakpoints above found one position to the left, to fill the gap 
+  // for (int idx = found_idx; idx < breakpoints_sz; ++idx) {
+  //   // This is an object assignment operation, assigning to breakpoints[idx]
+  //   // the object currently in breakpoints[idx + 1]. Without std::move, this
+  //   // would cause a copy
 
-    std::cout << idx << "  " <<  breakpoints[idx].get_name() << "  " << breakpoints[idx+1].get_name() << "move\n";
+  //   std::cout << idx << "  " <<  breakpoints[idx].get_name() << "  " << breakpoints[idx+1].get_name() << "move\n";
     
     
-    breakpoints[idx] = std::move(breakpoints[idx + 1]);
+  //   breakpoints[idx] = std::move(breakpoints[idx + 1]);
     
-  }
+  // }
 
   std::cout << "erasing....\n";
   //  return 1;
@@ -371,14 +371,14 @@ int Emulator::delete_breakpoint(const std::string name) {
   if (found == NULL)
     return 0;
 
-  --breakpoints_sz;
+  // --breakpoints_sz;
 
-  int found_idx = found - breakpoints;
+  // int found_idx = found - breakpoints;
 
-  // Move all breakpoints above found, one position to the left to fill the gap 
-  for (int idx = found_idx; idx < breakpoints_sz; ++idx) {
-    breakpoints[idx] = std::move(breakpoints[idx + 1]);
-  }
+  // // Move all breakpoints above found, one position to the left to fill the gap 
+  // for (int idx = found_idx; idx < breakpoints_sz; ++idx) {
+  //   breakpoints[idx] = std::move(breakpoints[idx + 1]);
+  // }
 
   // return 1;
   
