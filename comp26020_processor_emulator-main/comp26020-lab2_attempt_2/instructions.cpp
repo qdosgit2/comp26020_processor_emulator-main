@@ -29,8 +29,9 @@ std::string InstructionBase::to_string() const {
 
   std::string buffer;
 
-  // Figure out what the instruction actually is based on the return value of name()
-  // and then generate an appropriate instruction-specific string
+  //  Figure out what the instruction actually is based on the return value of name()
+  //  and then generate an appropriate instruction-specific string
+  
   if (name() == "ADD")
     buffer = name() + ": ACC <- ACC + [" + std::to_string(get_address()) + "]";
 
@@ -55,12 +56,13 @@ std::string InstructionBase::to_string() const {
   else if (name() == "JNE")
     buffer = name() + ": PC  <- " + std::to_string(get_address()) + " if ACC != 0";
   
+  //  This should never happen unless we have an error in name() or one of the strncmp's above
+  //  i.e. the tests will never try to trigger this code
   else
-    // This should never happen unless we have an error in name() or one of the strncmp's above
-    // i.e. the tests will never try to trigger this code
     assert(0);
   
   return buffer;
+  
 }
 
 InstructionBase* InstructionBase::generateInstruction(InstructionData data) {

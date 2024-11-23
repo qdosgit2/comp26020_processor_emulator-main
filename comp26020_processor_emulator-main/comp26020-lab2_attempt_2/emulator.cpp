@@ -187,11 +187,11 @@ int Emulator::insert_breakpoint(addr_t address, const std::string name) {
     return 0;
 
   // Breakpoint already exists
-  if (find_breakpoint(address) >= 0)
+  if (find_breakpoint(address).get_name() != "not found")
     return 0;
 
   // Breakpoint name already used
-  if (find_breakpoint(name) >= 0)
+  if (find_breakpoint(name).get_name() != "not found")
     return 0;
 
   // Insert breakpoint and increment breakpoints_sz in a single step
@@ -201,8 +201,7 @@ int Emulator::insert_breakpoint(addr_t address, const std::string name) {
   
 }
 
-
-const int Emulator::find_breakpoint(addr_t address) const {
+const Breakpoint& Emulator::find_breakpoint(addr_t address) const {
   
   //  addr_t = int
 
@@ -220,7 +219,7 @@ const int Emulator::find_breakpoint(addr_t address) const {
       
       // If this one has the address we're looking for, return it.
       
-      return idx;
+      return *breakpoints[idx];
       
     }
     
@@ -228,12 +227,13 @@ const int Emulator::find_breakpoint(addr_t address) const {
 
   //  Indicates failure to find a breakpoint.
   
-  return -1;
+  return Breakpoint(0, "not found");
   
 }
 
-// Basically the same as above, but for the name
-const int Emulator::find_breakpoint(const std::string name) const {
+//  Basically the same as above, but for the name
+
+const Breakpoint& Emulator::find_breakpoint(const std::string name) const {
 
   int idx;
 
@@ -241,13 +241,13 @@ const int Emulator::find_breakpoint(const std::string name) const {
     
     if (breakpoints[idx].has(name)) {
       
-      return idx;
+      return *breakpoints[idx];
       
     }
     
   }
   
-  return -1;
+  return Breakpoint(0, "not found");
   
 }
 
@@ -259,7 +259,7 @@ int Emulator::delete_breakpoint(addr_t address) {
 
   //  std::unique_ptr<Breakpoint> found = find_breakpoint(address);
 
-  int found = find_breakpoint(address);
+  Breakpoint& found = find_breakpoint(address);
 
   if (breakpoints[found])
     return 0;
