@@ -72,14 +72,12 @@ Emulator::Emulator() {
   // is okay, as long as you can handle the worst case of MAX_INSTRUCTIONS
   // breakpoints
 
-  breakpoints_sz = 0;
   total_cycles = 0;
 }
 
 // Copy Constructor
 Emulator::Emulator(const Emulator& other) {
   state = other.state;
-  breakpoints_sz = other.breakpoints_sz;
   
   total_cycles = other.total_cycles;
 
@@ -97,7 +95,6 @@ Emulator::Emulator(const Emulator& other) {
 Emulator::Emulator(Emulator&& other) noexcept {
   std::swap(state, other.state);
   std::swap(breakpoints_v, other.breakpoints_v);
-  std::swap(breakpoints_sz, other.breakpoints_sz);
   std::swap(total_cycles, other.total_cycles);
 }
 
@@ -107,7 +104,6 @@ Emulator& Emulator::operator=(const Emulator& other) {
     return *this;
 
   state = other.state;
-  breakpoints_sz = other.breakpoints_sz;
   total_cycles = other.total_cycles;
 
   int i;
@@ -125,7 +121,6 @@ Emulator& Emulator::operator=(const Emulator& other) {
 Emulator& Emulator::operator=(Emulator&& other) noexcept {
   std::swap(state, other.state);
   std::swap(breakpoints_v, other.breakpoints_v);
-  std::swap(breakpoints_sz, other.breakpoints_sz);
   std::swap(total_cycles, other.total_cycles);
   return *this;
 }
@@ -207,9 +202,6 @@ int Emulator::insert_breakpoint(addr_t address, const std::string name) {
 
   breakpoints_v.push_back(Breakpoint(address, name));
 
-  breakpoints_sz = breakpoints_v.size();
-
-
   return 1;
 }
 
@@ -285,9 +277,6 @@ int Emulator::delete_breakpoint(addr_t address) {
 
     breakpoints_v.erase(breakpoints_v.begin() + target);
     
-    //  For backwards compatibility.  
-    breakpoints_sz = breakpoints_v.size();
-
   }
 
   return 1;
@@ -307,7 +296,9 @@ int Emulator::delete_breakpoint(const std::string name) {
 }
 
 int Emulator::num_breakpoints() const {
-  return breakpoints_sz;
+  
+  return breakpoints_v.size();
+  
 }
 
 // ----------> Manage state
@@ -357,7 +348,6 @@ int Emulator::print_program() const {
 
 int Emulator::load_state(const std::string filename) {
   // Delete all breakpoints
-  breakpoints_sz = 0;
 
   breakpoints_v.clear();
 
