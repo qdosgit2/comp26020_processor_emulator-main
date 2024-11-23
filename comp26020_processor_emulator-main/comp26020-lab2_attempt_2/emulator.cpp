@@ -238,9 +238,9 @@ const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
 
     if (breakpoints_v[i].has(address)) {
 
-      std::cout << i << "  via vector\n";
+      std::cout << i << "  via vectors  " <<  breakpoints_v[i].get_name() << "  " << breakpoints_v[i].get_address() << "\n";
 
-    //   // return &breakpoints[i];
+      return &breakpoints_v[i];
 
     }
 
@@ -250,7 +250,6 @@ const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
   for (int idx = 0; idx < breakpoints_sz; ++idx) {
     if (breakpoints[idx].has(address)) {
       // if this one has the address we're looking for return it
-      std::cout << idx << "  via array\n\n";
 
       return &breakpoints[idx];
     }
@@ -260,16 +259,20 @@ const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
 }
 
 // Basically the same as above, but for the name
+
 const Breakpoint* Emulator::find_breakpoint(const std::string name) const {
+
   int i = 0;
 
   for (i = 0; i < breakpoints_v.size(); ++i) {
 
     if (breakpoints_v[i].has(name)) {
 
-      std::cout << i << "  via vector\n";
-
-      // return &breakpoints[i];
+      std::cout << i << "  via vectors  " <<  name << "  " << breakpoints_v[i].get_address() << "\n";
+      
+      // std::cout << name << "  name\n";
+      
+      return &breakpoints_v[i];
 
     }
 
@@ -278,20 +281,26 @@ const Breakpoint* Emulator::find_breakpoint(const std::string name) const {
   
   for (int idx = 0; idx < breakpoints_sz; ++idx) {
     if (breakpoints[idx].has(name)) {
-      std::cout << idx << "  via array\n\n";
+      
       return &breakpoints[idx];
+      
     }
+    
   }
+  
   return NULL;
+  
 }
 
 int Emulator::delete_breakpoint(addr_t address) {
   
   const Breakpoint* found = find_breakpoint(address);
 
+  std::cout << "erasing.\n";
   if (found == NULL)
     return 0;
 
+  std::cout << "erasing..\n";
   // Remove one breakpoint
   --breakpoints_sz;
 
@@ -300,16 +309,21 @@ int Emulator::delete_breakpoint(addr_t address) {
   // `found` and `breakpoints` is the index of `found` in the array.
   int found_idx = found - breakpoints;
 
+  std::cout << found_idx << "   erasing...\n";
   // Move all breakpoints above found one position to the left, to fill the gap 
   for (int idx = found_idx; idx < breakpoints_sz; ++idx) {
     // This is an object assignment operation, assigning to breakpoints[idx]
     // the object currently in breakpoints[idx + 1]. Without std::move, this
     // would cause a copy
 
+    std::cout << idx << "  " <<  breakpoints[idx].get_name() << "  " << breakpoints[idx+1].get_name() << "move\n";
+    
     
     breakpoints[idx] = std::move(breakpoints[idx + 1]);
+    
   }
 
+  std::cout << "erasing....\n";
   //  return 1;
 
   
@@ -328,6 +342,9 @@ int Emulator::delete_breakpoint(addr_t address) {
     i++;
 
   }
+
+  std::cout << "erasing.....\n";
+  // std::cout <<
 
   if (target == -1) {
 
@@ -532,12 +549,12 @@ int Emulator::save_state(const std::string filename) const {
 
   for (Breakpoint b : breakpoints_v) {
     
-    // fprintf(fp, "%d %s\n", b.get_address(), b.get_name());
+    fprintf(fp, "%d %s\n", b.get_address(), b.get_name());
 
   }
 
-  for (int idx = 0; idx < breakpoints_sz; ++idx)
-    fprintf(fp, "%d %s\n", breakpoints[idx].get_address(), breakpoints[idx].get_name());
+  // for (int idx = 0; idx < breakpoints_sz; ++idx)
+  //   fprintf(fp, "%d %s\n", breakpoints[idx].get_address(), breakpoints[idx].get_name());
 
   fclose(fp);
   
