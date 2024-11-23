@@ -3,13 +3,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <utility>
-#include <iostream>
 #include "emulator.h"
 
 // ============= Breakpoint ==============
-
-//  Not touching this much, pretty basic functions.
-
 Breakpoint::Breakpoint() { }
 
 Breakpoint::Breakpoint(addr_t address, const std::string name) {
@@ -71,7 +67,6 @@ Emulator::Emulator() {
   // This is obviously an overkill. Initialising the array to be shorter
   // is okay, as long as you can handle the worst case of MAX_INSTRUCTIONS
   // breakpoints
-
   breakpoints = new Breakpoint[MAX_INSTRUCTIONS];
   breakpoints_sz = 0;
   total_cycles = 0;
@@ -82,18 +77,9 @@ Emulator::Emulator(const Emulator& other) {
   state = other.state;
   breakpoints = new Breakpoint[MAX_INSTRUCTIONS];
   breakpoints_sz = other.breakpoints_sz;
-  
   total_cycles = other.total_cycles;
 
-  int i;
-
-  for (i = 0 ; i < other.breakpoints_v.size(); i++ ) {
-
-    breakpoints_v.push_back(other.breakpoints_v[i]);
-
-  }
-
-  for (i = 0; i < breakpoints_sz; ++i)
+  for (int i = 0; i < breakpoints_sz; ++i)
     breakpoints[i] = other.breakpoints[i];
 }
 
@@ -101,7 +87,6 @@ Emulator::Emulator(const Emulator& other) {
 Emulator::Emulator(Emulator&& other) noexcept {
   std::swap(state, other.state);
   std::swap(breakpoints, other.breakpoints);
-  std::swap(breakpoints_v, other.breakpoints_v);
   std::swap(breakpoints_sz, other.breakpoints_sz);
   std::swap(total_cycles, other.total_cycles);
 }
@@ -116,15 +101,7 @@ Emulator& Emulator::operator=(const Emulator& other) {
   breakpoints_sz = other.breakpoints_sz;
   total_cycles = other.total_cycles;
 
-  int i;
-
-  for (i = 0 ; i < other.breakpoints_v.size(); i++ ) {
-
-    breakpoints_v.push_back(other.breakpoints_v[i]);
-
-  }
-  
-  for (i = 0; i < breakpoints_sz; ++i)
+  for (int i = 0; i < breakpoints_sz; ++i)
     breakpoints[i] = other.breakpoints[i];
   return *this;
 }
@@ -133,15 +110,12 @@ Emulator& Emulator::operator=(const Emulator& other) {
 Emulator& Emulator::operator=(Emulator&& other) noexcept {
   std::swap(state, other.state);
   std::swap(breakpoints, other.breakpoints);
-  std::swap(breakpoints_v, other.breakpoints_v);
   std::swap(breakpoints_sz, other.breakpoints_sz);
   std::swap(total_cycles, other.total_cycles);
   return *this;
 }
 
 // ----------> Main emulation loop
-
-//  Not touching this, calls other files not part of coursework.
 
 InstructionData Emulator::fetch() const {
   InstructionData data;
@@ -180,7 +154,7 @@ int Emulator::run(int steps) {
 
     // Fetch the next instruction from memory and transform it into an InstructionBase-derived object
     InstructionBase* instr = decode(fetch());
-   
+
     if (instr == NULL)
       return 0;
 
@@ -204,8 +178,6 @@ int Emulator::run(int steps) {
 
 int Emulator::insert_breakpoint(addr_t address, const std::string name) {
   // breakpoints is full (should never happen though!)
-
-  //  Redundant for vectors. -----------------------------
   if (breakpoints_sz == MAX_INSTRUCTIONS)
     return 0;
 
@@ -217,41 +189,17 @@ int Emulator::insert_breakpoint(addr_t address, const std::string name) {
   if (find_breakpoint(name) != NULL)
     return 0;
 
-  breakpoints_v.push_back(Breakpoint(address, name));
-
   // Insert breakpoint and increment breakpoints_sz in a single step
   breakpoints[breakpoints_sz++] = Breakpoint(address, name);
-
-  breakpoints_sz = breakpoints_v.size();
-
-
   return 1;
 }
 
 
 const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
   // iterate over all breakpoints
-
-  int i = 0;
-
-  for (i = 0; i < breakpoints_v.size(); ++i) {
-
-    if (breakpoints_v[i].has(address)) {
-
-      std::cout << i << "  via vector\n";
-
-    //   // return &breakpoints[i];
-
-    }
-
-  }
-  
-  
   for (int idx = 0; idx < breakpoints_sz; ++idx) {
     if (breakpoints[idx].has(address)) {
       // if this one has the address we're looking for return it
-      std::cout << idx << "  via array\n\n";
-
       return &breakpoints[idx];
     }
   }
@@ -261,24 +209,8 @@ const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
 
 // Basically the same as above, but for the name
 const Breakpoint* Emulator::find_breakpoint(const std::string name) const {
-  int i = 0;
-
-  for (i = 0; i < breakpoints_v.size(); ++i) {
-
-    if (breakpoints_v[i].has(name)) {
-
-      std::cout << i << "  via vector\n";
-
-      // return &breakpoints[i];
-
-    }
-
-  }
-
-  
   for (int idx = 0; idx < breakpoints_sz; ++idx) {
     if (breakpoints[idx].has(name)) {
-      std::cout << idx << "  via array\n\n";
       return &breakpoints[idx];
     }
   }
@@ -286,7 +218,6 @@ const Breakpoint* Emulator::find_breakpoint(const std::string name) const {
 }
 
 int Emulator::delete_breakpoint(addr_t address) {
-  
   const Breakpoint* found = find_breakpoint(address);
 
   if (found == NULL)
@@ -305,50 +236,14 @@ int Emulator::delete_breakpoint(addr_t address) {
     // This is an object assignment operation, assigning to breakpoints[idx]
     // the object currently in breakpoints[idx + 1]. Without std::move, this
     // would cause a copy
-
-    
     breakpoints[idx] = std::move(breakpoints[idx + 1]);
   }
 
-  //  return 1;
-
-  
-  int i = 0;
-
-  int target = -1;
-
-  for ( Breakpoint b : breakpoints_v ) {
-
-    if (b.get_address() == address) {
-
-      target = i;
-
-    }
-
-    i++;
-
-  }
-
-  if (target == -1) {
-
-    return 0;
-
-  } else {
-
-    breakpoints_v.erase(breakpoints_v.begin() + target);
-    
-    //  For backwards compatibility.  
-    breakpoints_sz = breakpoints_v.size();
-
-  }
-
   return 1;
-  
 }
 
 // Oh, look, this function is practically identical to the one above
 int Emulator::delete_breakpoint(const std::string name) {
-  
   const Breakpoint* found = find_breakpoint(name);
 
   if (found == NULL)
@@ -363,45 +258,7 @@ int Emulator::delete_breakpoint(const std::string name) {
     breakpoints[idx] = std::move(breakpoints[idx + 1]);
   }
 
-  // return 1;
-  
-
-
-  //  This can be cut back at a later point, when all underlying data
-  //  structures are changed.
-  
-  int i = 0;
-
-  int target = -1;
-
-  for ( Breakpoint b : breakpoints_v ) {
-
-    if (b.get_name() == name) {
-
-      target = i;
-
-    }
-
-    i++;
-
-  }
-
-  if (target == -1) {
-
-    return 0;
-
-  } else {
-
-    breakpoints_v.erase(breakpoints_v.begin() + target);
-
-    //  For backwards compatibility.
-    breakpoints_sz = breakpoints_v.size();
-    
-  }
-
-  
   return 1;
-
 }
 
 int Emulator::num_breakpoints() const {
@@ -448,7 +305,7 @@ int Emulator::print_program() const {
     if ((instr == NULL) || (data.opcode == 0 && data.address == 0))
       printf("%d:\t%d\t%d\n", offset, data.opcode, data.address);
     else 
-      printf("%d:\t%d\t%d\t:\t%s\n", offset, data.opcode, data.address, instr->to_string().c_str());
+      printf("%d:\t%d\t%d\t:\t%s\n", offset, data.opcode, data.address, instr->to_string());
   }
   return 1;
 }
@@ -456,8 +313,6 @@ int Emulator::print_program() const {
 int Emulator::load_state(const std::string filename) {
   // Delete all breakpoints
   breakpoints_sz = 0;
-
-  breakpoints_v.clear();
 
   int read = 0;
   FILE *fp = fopen(filename.c_str(), "r");
@@ -528,12 +383,6 @@ int Emulator::save_state(const std::string filename) const {
     // PP: Use temporary variables for the same reason as in load_state
     int num = state.memory[offset];
     fprintf(fp, "%d\n", num);
-  }
-
-  for (Breakpoint b : breakpoints_v) {
-    
-    // fprintf(fp, "%d %s\n", b.get_address(), b.get_name());
-
   }
 
   for (int idx = 0; idx < breakpoints_sz; ++idx)

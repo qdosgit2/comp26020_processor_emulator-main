@@ -1,5 +1,5 @@
-CMakeFiles/emulator.dir/instructions.cpp.o: \
- /workspaces/comp26020_processor_emulator-main/comp26020_processor_emulator-main/comp26020-lab2_attempt_2/instructions.cpp \
+CMakeFiles/emulator_asan.dir/emulator.cpp.o: \
+ /workspaces/comp26020_processor_emulator-main/comp26020_processor_emulator-main/comp26020-lab2_attempt_2/emulator.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/12/cassert \
  /usr/include/x86_64-linux-gnu/c++/12/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/12/bits/os_defines.h \
@@ -65,7 +65,15 @@ CMakeFiles/emulator.dir/instructions.cpp.o: \
  /usr/include/string.h /usr/include/strings.h \
  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
- /workspaces/comp26020_processor_emulator-main/comp26020_processor_emulator-main/comp26020-lab2_attempt_2/instructions.h \
+ /usr/include/c++/12/utility /usr/include/c++/12/bits/stl_relops.h \
+ /usr/include/c++/12/bits/stl_pair.h /usr/include/c++/12/type_traits \
+ /usr/include/c++/12/bits/move.h /usr/include/c++/12/bits/utility.h \
+ /usr/include/c++/12/compare /usr/include/c++/12/concepts \
+ /usr/include/c++/12/initializer_list \
+ /usr/include/c++/12/ext/numeric_traits.h \
+ /usr/include/c++/12/bits/cpp_type_traits.h \
+ /usr/include/c++/12/ext/type_traits.h \
+ /workspaces/comp26020_processor_emulator-main/comp26020_processor_emulator-main/comp26020-lab2_attempt_2/emulator.h \
  /workspaces/comp26020_processor_emulator-main/comp26020_processor_emulator-main/comp26020-lab2_attempt_2/common.h \
  /usr/include/inttypes.h \
  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h /usr/include/stdint.h \
@@ -78,10 +86,8 @@ CMakeFiles/emulator.dir/instructions.cpp.o: \
  /usr/include/wchar.h /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
- /usr/include/c++/12/type_traits /usr/include/c++/12/compare \
- /usr/include/c++/12/concepts /usr/include/c++/12/bits/stl_construct.h \
- /usr/include/c++/12/new /usr/include/c++/12/bits/exception.h \
- /usr/include/c++/12/bits/move.h \
+ /usr/include/c++/12/bits/stl_construct.h /usr/include/c++/12/new \
+ /usr/include/c++/12/bits/exception.h \
  /usr/include/c++/12/bits/stl_iterator_base_types.h \
  /usr/include/c++/12/bits/iterator_concepts.h \
  /usr/include/c++/12/bits/ptr_traits.h \
@@ -94,7 +100,6 @@ CMakeFiles/emulator.dir/instructions.cpp.o: \
  /usr/include/c++/12/bits/new_allocator.h \
  /usr/include/c++/12/bits/functexcept.h \
  /usr/include/c++/12/bits/exception_defines.h \
- /usr/include/c++/12/bits/cpp_type_traits.h \
  /usr/include/c++/12/bits/localefwd.h \
  /usr/include/x86_64-linux-gnu/c++/12/bits/c++locale.h \
  /usr/include/c++/12/clocale /usr/include/locale.h \
@@ -103,17 +108,13 @@ CMakeFiles/emulator.dir/instructions.cpp.o: \
  /usr/include/c++/12/bits/ostream_insert.h \
  /usr/include/c++/12/bits/cxxabi_forced.h \
  /usr/include/c++/12/bits/stl_iterator.h \
- /usr/include/c++/12/ext/type_traits.h \
  /usr/include/c++/12/bits/stl_function.h \
  /usr/include/c++/12/backward/binders.h \
- /usr/include/c++/12/ext/numeric_traits.h \
  /usr/include/c++/12/bits/stl_algobase.h \
- /usr/include/c++/12/bits/stl_pair.h /usr/include/c++/12/bits/utility.h \
  /usr/include/c++/12/debug/debug.h \
  /usr/include/c++/12/bits/predefined_ops.h \
  /usr/include/c++/12/bits/refwrap.h /usr/include/c++/12/bits/invoke.h \
  /usr/include/c++/12/bits/range_access.h \
- /usr/include/c++/12/initializer_list \
  /usr/include/c++/12/bits/basic_string.h \
  /usr/include/c++/12/ext/alloc_traits.h \
  /usr/include/c++/12/bits/alloc_traits.h /usr/include/c++/12/string_view \

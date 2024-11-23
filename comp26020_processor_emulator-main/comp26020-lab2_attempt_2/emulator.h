@@ -186,15 +186,13 @@ class Emulator {
      */
     int insert_breakpoint(addr_t address, const std::string name);
 
-    // /**
-    //  * Find the breakpoint with the given address in our breakpoint storage
-    //  *
-    //  * @param address The breakpoint address
-    //  * @return A non-owning pointer to the Breakpoint or null if the address was not found
-    //  */
-    // const Breakpoint* find_breakpoint(addr_t address) const;
-
-    const std::shared_ptr<Breakpoint> find_breakpoint(addr_t address) const;
+    /**
+     * Find the breakpoint with the given address in our breakpoint storage
+     *
+     * @param address The breakpoint address
+     * @return A non-owning pointer to the Breakpoint or null if the address was not found
+     */
+    const Breakpoint* find_breakpoint(addr_t address) const;
 
     /**
      * Find the breakpoint with the given name in our breakpoint storage
@@ -202,9 +200,7 @@ class Emulator {
      * @param name The name of the breakpoint (non-owning pointer)
      * @return A non-owning pointer to the Breakpoint or null if the name was not found
      */
-    // const Breakpoint* find_breakpoint(const std::string name) const;
-
-    const std::shared_ptr<Breakpoint> find_breakpoint(const std::string name) const;
+    const Breakpoint* find_breakpoint(const std::string name) const;
 
     /**
      * Unregister the breakpoint with the given address
@@ -306,20 +302,24 @@ class Emulator {
     int save_state(const std::string state_filename) const;
   
   private:
+
+  //  I tried changing the below to:
+
+  //  std::shared_ptr<Breakpoint[]>
+
+  //  ...and then rewrote find_breakpoint(), insert_breakpoint(), and
+  //  delete_breakpoint(), but then realised the tests are not
+  //  expecting smart pointers. But they initially seemed to be
+  //  compatible as they work with the C pointer syntax "->" which the
+  //  tests are expecting.
+
+  //  So instead opting to make calls to breakpoints_v under-the-hood,
+  //  for code convenience and memory safety.
+
+  std::vector<Breakpoint> breakpoints_v;
   
     ProcessorState state;
-  
-    //  Breakpoint* breakpoints;
-
-    //  The more convenient data structure would probably be:
-
-    // std::vector<Breakpoint> breakpoints;
-
-    //  The most backwards compatible data structure, i.e. will work
-    //  with tests (probably a big thing in the world of C++) is
-    //  probably:
-  
-    std::shared_ptr<Breakpoint[]> breakpoints;
+    Breakpoint* breakpoints;
     int breakpoints_sz;
     int total_cycles;
   
