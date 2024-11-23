@@ -72,7 +72,6 @@ Emulator::Emulator() {
   // is okay, as long as you can handle the worst case of MAX_INSTRUCTIONS
   // breakpoints
 
-  breakpoints = new Breakpoint[MAX_INSTRUCTIONS];
   breakpoints_sz = 0;
   total_cycles = 0;
 }
@@ -80,7 +79,6 @@ Emulator::Emulator() {
 // Copy Constructor
 Emulator::Emulator(const Emulator& other) {
   state = other.state;
-  breakpoints = new Breakpoint[MAX_INSTRUCTIONS];
   breakpoints_sz = other.breakpoints_sz;
   
   total_cycles = other.total_cycles;
@@ -93,14 +91,11 @@ Emulator::Emulator(const Emulator& other) {
 
   }
 
-  for (i = 0; i < breakpoints_sz; ++i)
-    breakpoints[i] = other.breakpoints[i];
 }
 
 // Move Constructor
 Emulator::Emulator(Emulator&& other) noexcept {
   std::swap(state, other.state);
-  std::swap(breakpoints, other.breakpoints);
   std::swap(breakpoints_v, other.breakpoints_v);
   std::swap(breakpoints_sz, other.breakpoints_sz);
   std::swap(total_cycles, other.total_cycles);
@@ -112,7 +107,6 @@ Emulator& Emulator::operator=(const Emulator& other) {
     return *this;
 
   state = other.state;
-  breakpoints = new Breakpoint[MAX_INSTRUCTIONS];
   breakpoints_sz = other.breakpoints_sz;
   total_cycles = other.total_cycles;
 
@@ -124,15 +118,12 @@ Emulator& Emulator::operator=(const Emulator& other) {
 
   }
   
-  for (i = 0; i < breakpoints_sz; ++i)
-    breakpoints[i] = other.breakpoints[i];
   return *this;
 }
 
 // Move Assignment Operator
 Emulator& Emulator::operator=(Emulator&& other) noexcept {
   std::swap(state, other.state);
-  std::swap(breakpoints, other.breakpoints);
   std::swap(breakpoints_v, other.breakpoints_v);
   std::swap(breakpoints_sz, other.breakpoints_sz);
   std::swap(total_cycles, other.total_cycles);
@@ -205,10 +196,7 @@ int Emulator::run(int steps) {
 int Emulator::insert_breakpoint(addr_t address, const std::string name) {
   // breakpoints is full (should never happen though!)
 
-  //  Redundant for vectors. -----------------------------
-  if (breakpoints_sz == MAX_INSTRUCTIONS)
-    return 0;
-
+  
   // Breakpoint already exists
   if (find_breakpoint(address) != NULL)
     return 0;
@@ -218,9 +206,6 @@ int Emulator::insert_breakpoint(addr_t address, const std::string name) {
     return 0;
 
   breakpoints_v.push_back(Breakpoint(address, name));
-
-  // Insert breakpoint and increment breakpoints_sz in a single step
-  // breakpoints[breakpoints_sz++] = Breakpoint(address, name);
 
   breakpoints_sz = breakpoints_v.size();
 
@@ -238,7 +223,7 @@ const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
 
     if (breakpoints_v[i].has(address)) {
 
-      std::cout << i << "  via vectors  " <<  breakpoints_v[i].get_name() << "  " << breakpoints_v[i].get_address() << "  " << &breakpoints_v[i] << "\n";
+      // std::cout << i << "  via vectors  " <<  breakpoints_v[i].get_name() << "  " << breakpoints_v[i].get_address() << "  " << &breakpoints_v[i] << "\n";
 
       return &breakpoints_v[i];
 
@@ -246,15 +231,6 @@ const Breakpoint* Emulator::find_breakpoint(addr_t address) const {
 
   }
   
-  
-  // for (int idx = 0; idx < breakpoints_sz; ++idx) {
-  //   if (breakpoints[idx].has(address)) {
-  //     // if this one has the address we're looking for return it
-
-  //     return &breakpoints[idx];
-  //   }
-  // }
-  // indicates failure to find a breakpoint
   return NULL;
 }
 
@@ -267,26 +243,12 @@ const Breakpoint* Emulator::find_breakpoint(const std::string name) const {
   for (i = 0; i < breakpoints_v.size(); ++i) {
 
     if (breakpoints_v[i].has(name)) {
-
-      // std::cout << i << "  via vectors  " <<  name << "  " << breakpoints_v[i].get_address() << "  " <<  &breakpoints_v[i] << "\n";
-      
-      // std::cout << name << "  name\n";
       
       return &breakpoints_v[i];
 
     }
 
   }
-
-  
-  // for (int idx = 0; idx < breakpoints_sz; ++idx) {
-  //   if (breakpoints[idx].has(name)) {
-      
-  //     return &breakpoints[idx];
-      
-  //   }
-    
-  // }
   
   return NULL;
   
@@ -296,36 +258,8 @@ int Emulator::delete_breakpoint(addr_t address) {
   
   const Breakpoint* found = find_breakpoint(address);
 
-  std::cout << "erasing.\n";
   if (found == NULL)
     return 0;
-
-  std::cout << "erasing..\n";
-  // Remove one breakpoint
-  --breakpoints_sz;
-
-  // Urghh: C pointer magic to find the index of the breakpoint from its pointer
-  // `found` is a pointer in the `breakpoints` array, so the difference of
-  // `found` and `breakpoints` is the index of `found` in the array.
-  int found_idx = found - breakpoints;
-
-  // std::cout << found_idx << "   erasing...\n";
-  // // Move all breakpoints above found one position to the left, to fill the gap 
-  // for (int idx = found_idx; idx < breakpoints_sz; ++idx) {
-  //   // This is an object assignment operation, assigning to breakpoints[idx]
-  //   // the object currently in breakpoints[idx + 1]. Without std::move, this
-  //   // would cause a copy
-
-  //   std::cout << idx << "  " <<  breakpoints[idx].get_name() << "  " << breakpoints[idx+1].get_name() << "move\n";
-    
-    
-  //   breakpoints[idx] = std::move(breakpoints[idx + 1]);
-    
-  // }
-
-  std::cout << "erasing....\n";
-  //  return 1;
-
   
   int i = 0;
 
@@ -342,9 +276,6 @@ int Emulator::delete_breakpoint(addr_t address) {
     i++;
 
   }
-
-  std::cout << "erasing.....\n";
-  // std::cout <<
 
   if (target == -1) {
 
@@ -370,54 +301,8 @@ int Emulator::delete_breakpoint(const std::string name) {
 
   if (found == NULL)
     return 0;
-
-  // --breakpoints_sz;
-
-  // int found_idx = found - breakpoints;
-
-  // // Move all breakpoints above found, one position to the left to fill the gap 
-  // for (int idx = found_idx; idx < breakpoints_sz; ++idx) {
-  //   breakpoints[idx] = std::move(breakpoints[idx + 1]);
-  // }
-
-  // return 1;
-  
-
-
-  //  This can be cut back at a later point, when all underlying data
-  //  structures are changed.
-  
-  int i = 0;
-
-  int target = -1;
-
-  for ( Breakpoint b : breakpoints_v ) {
-
-    if (b.get_name() == name) {
-
-      target = i;
-
-    }
-
-    i++;
-
-  }
-
-  if (target == -1) {
-
-    return 0;
-
-  } else {
-
-    breakpoints_v.erase(breakpoints_v.begin() + target);
-
-    //  For backwards compatibility.
-    breakpoints_sz = breakpoints_v.size();
-    
-  }
-
-  
-  return 1;
+ 
+  return delete_breakpoint(found->get_address());  
 
 }
 
@@ -553,8 +438,6 @@ int Emulator::save_state(const std::string filename) const {
 
   }
 
-  // for (int idx = 0; idx < breakpoints_sz; ++idx)
-  //   fprintf(fp, "%d %s\n", breakpoints[idx].get_address(), breakpoints[idx].get_name());
 
   fclose(fp);
   

@@ -2308,7 +2308,7 @@ TEST_CASE("Delete Breakpoint", "[emulator][breakpoint][exec]") {
   }
 
   SECTION("delete_breakpoint() deletes existing breakpoints by address") {
-      std::cout << num_breakpoints << "  TEST 2  ";
+      // std::cout << num_breakpoints << "  TEST 2  ";
     for (int i = 0; i < num_breakpoints; ++i) {
       CHECK(emulator.delete_breakpoint(addresses[i]));
       CHECK(emulator.num_breakpoints() == num_breakpoints - i - 1);
@@ -2319,7 +2319,7 @@ TEST_CASE("Delete Breakpoint", "[emulator][breakpoint][exec]") {
   // When entering this we still have seven checkpoints available
   // despite the section above
   SECTION("delete_breakpoint() deletes existing breakpoints by name") {
-      std::cout << num_breakpoints << "  TEST 3  ";
+      // std::cout << num_breakpoints << "  TEST 3  ";
     for (int i = 0; i < num_breakpoints; ++i) {
       CHECK(emulator.delete_breakpoint(names[i]));
       CHECK(emulator.num_breakpoints() == num_breakpoints - i - 1);
@@ -2328,10 +2328,10 @@ TEST_CASE("Delete Breakpoint", "[emulator][breakpoint][exec]") {
 
   SECTION("delete_breakpoint() still works if deleting them from the end") {
     for (int i = num_breakpoints - 1; i >= 0; --i) {
-      std::cout << num_breakpoints << "  TEST 4  " << i << "  "  <<  addresses[i] << "\n";
+      // std::cout << num_breakpoints << "  TEST 4  " << i << "  "  <<  addresses[i] << "\n";
       CHECK(emulator.delete_breakpoint(addresses[i]));
 
-      std::cout << "TEST 4.1\n";
+      // std::cout << "TEST 4.1\n";
       CHECK(emulator.num_breakpoints() == i);
     }
   }
@@ -2398,11 +2398,11 @@ TEST_CASE("Delete Breakpoint", "[emulator][breakpoint][exec]") {
   SECTION("Can add a breakpoint after deleting it") {
     for (int i = 0; i < num_breakpoints; ++i) {
 
-      std::cout << "  "  <<  "test a\n";
+      // std::cout << "  "  <<  "test a\n";
       REQUIRE(emulator.delete_breakpoint(names[i]));
-      std::cout << "  "  <<  "test b\n";
+      // std::cout << "  "  <<  "test b\n";
       REQUIRE(emulator.num_breakpoints() == num_breakpoints - 1);
-      std::cout << "  "  <<  "test c\n";
+      // std::cout << "  "  <<  "test c\n";
       REQUIRE(emulator.find_breakpoint(names[i]) == NULL);
 
       CHECK(emulator.insert_breakpoint(addresses[i], names[i]));
