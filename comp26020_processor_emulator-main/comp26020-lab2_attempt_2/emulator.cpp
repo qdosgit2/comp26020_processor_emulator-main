@@ -371,6 +371,7 @@ int Emulator::load_state(const std::string filename) {
 
   int offset = 0;
 
+  
   ////    Load first 3 lines from file, heavy error checking.
 
   ////    Below works, tested.
@@ -427,6 +428,7 @@ int Emulator::load_state(const std::string filename) {
     } else { return 0; }
    
   }
+
   
   ////    Iterate over file, load breakpoint numbers and names from file.
 
@@ -458,34 +460,45 @@ int Emulator::load_state(const std::string filename) {
     
   }
 
+  file.close();
+
   return 1;
   
 }
 
 int Emulator::save_state(const std::string filename) const {
-  FILE* fp = fopen(filename.c_str(), "w");
+  
+  std::ofstream file;
 
-  if (fp == NULL)
-    return 0;
+  file.open(filename);  
+  
+  std::string line;
 
-  fprintf(fp, "%d\n", total_cycles);
-  fprintf(fp, "%d\n", state.acc);
-  fprintf(fp, "%d\n", state.pc);
+  std::string word;
+
+  std::vector<std::string> split_str;  
+  
+  file << total_cycles << "\n";
+
+  file << state.acc << "\n";
+
+  file << state.pc << "\n";
 
   for (int offset = 0; offset < MEMORY_SIZE; ++offset) {
-    // PP: Use temporary variables for the same reason as in load_state
+    
     int num = state.memory[offset];
-    fprintf(fp, "%d\n", num);
+    
+    file << num << "\n";
+
   }
 
   for (Breakpoint b : breakpoints_v) {
     
-    fprintf(fp, "%d %s\n", b.get_address(), b.get_name());
+    file << b.get_address() << " " << b.get_name() << "\n";
 
   }
 
-
-  fclose(fp);
+  file.close();
   
   return 1;
   

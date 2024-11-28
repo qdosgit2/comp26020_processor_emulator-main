@@ -291,12 +291,6 @@ class Emulator {
      */
     int load_state(const std::string state_filename);
 
-    int load_state_part_1(std::ifstream file);
-
-    int load_state_part_2(std::ifstream file);
-
-    int load_state_part_3(std::ifstream file);
-
     /**
      * Stores the processor state in a file, in the same format used by load_state
      *
