@@ -319,8 +319,6 @@ class Emulator {
     std::vector<Breakpoint> breakpoints_v;
   
     ProcessorState state;
-    Breakpoint* breakpoints;
-    int breakpoints_sz;
     int total_cycles;
   
 };

@@ -65,6 +65,7 @@ std::string InstructionBase::to_string() const {
 
 InstructionBase* InstructionBase::generateInstruction(InstructionData data) {
   // This could be a switch-case, but it's not important
+  
   if (data.opcode == ADD)
     return new Iadd(data.address);
   if (data.opcode == AND)
