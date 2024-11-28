@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include "instructions.h"
 
 // ========== InstructionBase ==========
@@ -65,7 +66,28 @@ std::string InstructionBase::to_string() const {
 
 InstructionBase* InstructionBase::generateInstruction(InstructionData data) {
   // This could be a switch-case, but it's not important
+
+  // std::vector<InstructionBase> ib_v;
+
+  // if (data.opcode == ADD)
+  //   ib_v.push_back(Iadd(data.address));
+  // if (data.opcode == AND)
+  //   ib_v.push_back(Iand(data.address));
+  // if (data.opcode == ORR)
+  //   ib_v.push_back(Iorr(data.address));
+  // if (data.opcode == XOR)
+  //   ib_v.push_back(Ixor(data.address));
+  // if (data.opcode == LDR)
+  //   ib_v.push_back(Ildr(data.address));
+  // if (data.opcode == STR)
+  //   ib_v.push_back(Istr(data.address));
+  // if (data.opcode == JMP)
+  //   ib_v.push_back(Ijmp(data.address));
+  // if (data.opcode == JNE)
+  //   ib_v.push_back(Ijne(data.address));
   
+  // if (ib_v.size() > 0) { return &ib_v[0]; }
+
   if (data.opcode == ADD)
     return new Iadd(data.address);
   if (data.opcode == AND)
