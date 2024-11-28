@@ -349,18 +349,23 @@ int Emulator::print_program() const {
 }
 
 int Emulator::load_state(const std::string filename) {
+
+  //  This is a lengthy function that really needs breaking down into pieces.
+
+  
   
   // Delete all breakpoints
 
   breakpoints_v.clear();
 
 
+  
 
 
   std::cout << filename << "\n";
 
-  
 
+  
 
 
   int read = 0;
@@ -370,8 +375,10 @@ int Emulator::load_state(const std::string filename) {
   if (fp == NULL)
     return 0;
 
-  // Make sure that each fscanf reads the right number of items
+  ////    Make sure that each fscanf reads the right number of items
+  
   read = fscanf(fp, "%d\n", &total_cycles);
+  
   if ((read != 1) || (total_cycles < 0))
     return 0;
 
@@ -384,15 +391,7 @@ int Emulator::load_state(const std::string filename) {
     return 0;
 
 
-
-
-
-
-
-  ///////////////////  BELOW WORKS, TESTED
-
-  
-
+  ////    BELOW WORKS, TESTED
   
   std::ifstream file;
 
@@ -406,6 +405,8 @@ int Emulator::load_state(const std::string filename) {
 
   int offset = 0;
 
+
+  ////    Load first 3 lines from file, heavy error checking.
 
   file.open(filename);
 
@@ -434,28 +435,30 @@ int Emulator::load_state(const std::string filename) {
   if (!file.good() || state.pc >= MEMORY_SIZE || state.pc < 0) { return 0; }
 
 
+  ////    Iterate over file based on offset size, parse numbers, load state to memory.
 
-  ////////////////////////////////////////
-
-  for (offset ; offset < MEMORY_SIZE; offset++) {
+  // for (offset ; offset < MEMORY_SIZE; offset++) {
     
-    std::getline(file, line);
+  //   std::getline(file, line);
   
-    try { num = std::stoi(line); }
+  //   try { num = std::stoi(line); }
 
-    catch (...) { return 0; }
+  //   catch (...) { return 0; }
 
-    if (!file.good()  || (num > ARCH_MAXVAL) || (num < 0)) {
+  //   if (!file.good() || (num > ARCH_MAXVAL) || (num < 0)) {
 
-      return 0;
+  //     return 0;
 
-    }
+  //   }
 
-    std::cout << offset << "  " << num << "\n";
+  //   std::cout << offset << "  " << num << "\n";
     
-    // state.memory[offset] = num;
+  //   // state.memory[offset] = num;
    
-  }
+  // }
+
+
+  ////    Iterate over file, load breakpoint numbers and names from file.
 
   // while (std::getline(file, line)) {
     
@@ -479,6 +482,7 @@ int Emulator::load_state(const std::string filename) {
 
 
 
+  ////    Iterate over file, load state to memory.
   
   num = 0;
   
@@ -498,32 +502,32 @@ int Emulator::load_state(const std::string filename) {
     if ((read != 1) || (num > ARCH_MAXVAL) || (num < 0))
       return 0;
     
-    // std::cout << offset << "  " << num << "\n";
+    std::cout << offset << "  " << num << "\n";
     
     state.memory[offset] = num;
     
   }
 
-  while (1) {
-    char name[MAX_NAME];
-    int read = fscanf(fp, "%d %s\n", &num, name);
-    // End of the file
-    if (read != 2)
-      break;
+  // while (1) {
+  //   char name[MAX_NAME];
+  //   int read = fscanf(fp, "%d %s\n", &num, name);
+  //   // End of the file
+  //   if (read != 2)
+  //     break;
 
-    // Wrong data (num is supposed to be an address)
-    if ((num < 0) || (num >= MEMORY_SIZE))
-      return 0;
+  //   // Wrong data (num is supposed to be an address)
+  //   if ((num < 0) || (num >= MEMORY_SIZE))
+  //     return 0;
 
-    // Try to insert the breakpoint and return fail if unsuccessful
-    std::cout << num << "  " << name << "\n";
+  //   // Try to insert the breakpoint and return fail if unsuccessful
+  //   std::cout << num << "  " << name << "\n";
     
-    if (!insert_breakpoint(num, name))
-      return 0;
-  }
+  //   if (!insert_breakpoint(num, name))
+  //     return 0;
+  // }
 
-  fclose(fp);
-  return 1;
+  // fclose(fp);
+  // return 1;
 }
 
 int Emulator::save_state(const std::string filename) const {
