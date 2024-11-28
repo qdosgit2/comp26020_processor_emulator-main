@@ -362,7 +362,7 @@ int Emulator::load_state(const std::string filename) {
   
 
 
-  std::cout << filename << "\n";
+  // std::cout << filename << "\n";
 
 
   
@@ -391,8 +391,6 @@ int Emulator::load_state(const std::string filename) {
     return 0;
 
 
-  ////    BELOW WORKS, TESTED
-  
   std::ifstream file;
 
   std::string line;
@@ -408,6 +406,8 @@ int Emulator::load_state(const std::string filename) {
 
   ////    Load first 3 lines from file, heavy error checking.
 
+  ////    Below works, tested.
+  
   file.open(filename);
 
   std::getline(file, line);
@@ -434,86 +434,110 @@ int Emulator::load_state(const std::string filename) {
 
   if (!file.good() || state.pc >= MEMORY_SIZE || state.pc < 0) { return 0; }
 
-
   ////    Iterate over file based on offset size, parse numbers, load state to memory.
 
-  // for (offset ; offset < MEMORY_SIZE; offset++) {
+  ////    Below works, tested.
+
+  for (offset ; offset < MEMORY_SIZE; offset++) {
     
-  //   std::getline(file, line);
+    std::getline(file, line);
+
+    if ( !line.empty() ) {
   
-  //   try { num = std::stoi(line); }
+      try { num = std::stoi(line); }
 
-  //   catch (...) { return 0; }
+      catch (...) { return 0; }
 
-  //   if (!file.good() || (num > ARCH_MAXVAL) || (num < 0)) {
+      if (!file.good() || (num > ARCH_MAXVAL) || (num < 0)) {
 
-  //     return 0;
+	return 0;
 
-  //   }
+      }
 
-  //   std::cout << offset << "  " << num << "\n";
+      // std::cout << offset << "  " << num << "\n";
     
-  //   // state.memory[offset] = num;
+      state.memory[offset] = num;
+      
+    } else { return 0; }
    
-  // }
+  }
 
 
   ////    Iterate over file, load breakpoint numbers and names from file.
 
-  // while (std::getline(file, line)) {
-    
-  //   std::stringstream ss(line);
+  ////    Below works, tested.
 
-  //   while (ss >> word) { split_str.push_back(word); }
+  // std::cout <<  "LOADING STATE\n";
 
-  //   try { num = std::stoi(split_str[0]); }
+  while (std::getline(file, line)) {
+    
+    std::stringstream ss(line);
 
-  //   catch (...) { return 0; }
+    //  Split into vector of strings.
 
-  //   if ( num >= MEMORY_SIZE ) { return 0; }
+    while (ss >> word) { split_str.push_back(word); }
 
-  //   std::cout << num << "  " << split_str[1] << "\n";
-    
-  //   // if (!insert_breakpoint(num, split_str[1])) { return 0; }
-    
-  //   split_str.clear();
-    
-  // }
+    //  Extract number.
 
+    try { num = std::stoi(split_str[0]); }
 
+    catch (...) { return 0; }
 
-  ////    Iterate over file, load state to memory.
-  
-  num = 0;
-  
-  for (offset = 0; offset < MEMORY_SIZE; ++offset) {
+    //  Sanity test number.
+
+    if ( num < 0 || num >= MEMORY_SIZE ) { return 0; }
+
+    // std::cout << num << "  " << split_str[1] << "\n";
+
+    if (!insert_breakpoint(num, split_str[1])) { return 0; }
     
-    // PP: Why not read a number directly into a state.memory location?
-    // C++ by default assumes that your byte sized variable (e.g. state.memory[offset])
-    // is supposed to hold a character, so it might assume that you are trying to read an
-    // individual character from the file, not a number that fits in 8-bits.
-    // E.g. if your next number is '0', it might load memory[offset] = '0' (48).
-    // There are ways to force fscanf to read a number, but it will cause fewer
-    // issues down the line, if you use integers as temporary storage, which forces C++
-    // to read a number
-    
-    read = fscanf(fp, "%d\n", &num);
-    
-    if ((read != 1) || (num > ARCH_MAXVAL) || (num < 0))
-      return 0;
-    
-    std::cout << offset << "  " << num << "\n";
-    
-    state.memory[offset] = num;
+    split_str.clear();
     
   }
 
+
+  return 1;
+
+  ////    Iterate over file, load state to memory.
+  
+  // num = 0;
+  
+  // for (offset = 0; offset < MEMORY_SIZE; ++offset) {
+    
+  //   // PP: Why not read a number directly into a state.memory location?
+  //   // C++ by default assumes that your byte sized variable (e.g. state.memory[offset])
+  //   // is supposed to hold a character, so it might assume that you are trying to read an
+  //   // individual character from the file, not a number that fits in 8-bits.
+  //   // E.g. if your next number is '0', it might load memory[offset] = '0' (48).
+  //   // There are ways to force fscanf to read a number, but it will cause fewer
+  //   // issues down the line, if you use integers as temporary storage, which forces C++
+  //   // to read a number
+    
+  //   read = fscanf(fp, "%d\n", &num);
+    
+  //   if ((read != 1) || (num > ARCH_MAXVAL) || (num < 0))
+  //     return 0;
+    
+  //   // std::cout << offset << "  " << num << "\n";
+    
+  //   state.memory[offset] = num;
+    
+  // }
+
   // while (1) {
+
+  //   // Load line to number and string.
+  
   //   char name[MAX_NAME];
   //   int read = fscanf(fp, "%d %s\n", &num, name);
+
+  //   // If file ends, break.
+  
   //   // End of the file
   //   if (read != 2)
   //     break;
+
+  //   // If data invalid, return.
 
   //   // Wrong data (num is supposed to be an address)
   //   if ((num < 0) || (num >= MEMORY_SIZE))
@@ -526,8 +550,10 @@ int Emulator::load_state(const std::string filename) {
   //     return 0;
   // }
 
-  // fclose(fp);
-  // return 1;
+  // Close file
+
+  fclose(fp);
+  return 1;
 }
 
 int Emulator::save_state(const std::string filename) const {
